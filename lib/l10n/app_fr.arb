@@ -1,0 +1,19 @@
+{
+  "@@locale": "fr",
+  "createAccount": "Créer votre compte",
+  "newHere": "Êtes-vous nouveau ici?",
+  "nostrAddress": "Adresse Nostr",
+  "publicKey": "Clé publique",
+  "privateKey": "Clé privée",
+  "browserExtension": "Extension de navigateur",
+  "connect": "Se connecter",
+  "install": "Installer",
+  "logout": "Se déconnecter",
+  "nostrAddressHint": "nom@exemple.com",
+  "invalidAddress": "Adresse invalide",
+  "unableToConnect": "Impossible de se connecter",
+  "publicKeyHint": "npub1...",
+  "privateKeyHint": "nsec1...",
+  "newToNostr": "Nouveau sur Nostr?",
+  "getStarted": "Commencer"
+}

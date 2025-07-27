@@ -1,0 +1,71 @@
+{
+  "@@locale": "en",
+  "createAccount": "Create your account",
+  "@createAccount": {
+    "description": "Button text for creating a new account"
+  },
+  "newHere": "Are you new here?",
+  "@newHere": {
+    "description": "Question asking if the user is new to the platform"
+  },
+  "nostrAddress": "Nostr Address",
+  "@nostrAddress": {
+    "description": "Label for nostr address input field"
+  },
+  "publicKey": "Public Key",
+  "@publicKey": {
+    "description": "Label for public key input field"
+  },
+  "privateKey": "Private Key",
+  "@privateKey": {
+    "description": "Label for private key input field"
+  },
+  "browserExtension": "Browser extension",
+  "@browserExtension": {
+    "description": "Label for browser extension login section"
+  },
+  "connect": "Connect",
+  "@connect": {
+    "description": "Button text to connect with browser extension"
+  },
+  "install": "Install",
+  "@install": {
+    "description": "Button text to install browser extension"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Button text to logout from the application"
+  },
+  "nostrAddressHint": "name@example.com",
+  "@nostrAddressHint": {
+    "description": "Placeholder text for nostr address input field"
+  },
+  "invalidAddress": "Invalid Address",
+  "@invalidAddress": {
+    "description": "Error message for invalid nostr address"
+  },
+  "unableToConnect": "Unable to connect",
+  "@unableToConnect": {
+    "description": "Error message when unable to connect to nostr address"
+  },
+  "publicKeyHint": "npub1...",
+  "@publicKeyHint": {
+    "description": "Placeholder text for public key input field"
+  },
+  "privateKeyHint": "nsec1...",
+  "@privateKeyHint": {
+    "description": "Placeholder text for private key input field"
+  },
+  "newToNostr": "New to Nostr?",
+  "@newToNostr": {
+    "description": "Question asking if the user is new to Nostr"
+  },
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Button text to get started with Nostr"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Button text to logout from the application"
+  }
+}
