@@ -1,6 +1,6 @@
 name: nostr_widgets
 description: "A Flutter UI package providing ready-to-use widgets."
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/nogringo/nostr-widgets
 repository: https://github.com/nogringo/nostr-widgets
 topics:
