@@ -1,15 +1,31 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
+import 'package:toastification/toastification.dart';
 
 class Repository extends GetxController {
   static Repository get to => Get.find();
 
+  RxInt selectedIndex = 0.obs;
   List<Nip01Event> publicNotes = [];
+
+  TextEditingController nwcSecretController = TextEditingController();
+  NwcConnection? nwcConnection;
 
   Ndk get ndk => Get.find();
 
   Repository() {
     fetchNotes();
+  }
+
+  void initApp() async {
+    fetchNotes();
+
+    final storage = FlutterSecureStorage();
+    final nwcSecret = await storage.read(key: "NWC_SECRET");
+    if (nwcSecret != null) nwcConnect(nwcSecret);
   }
 
   void fetchNotes() async {
@@ -32,6 +48,53 @@ class Repository extends GetxController {
     }
 
     publicNotes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    update();
+  }
+
+  void nwcConnect(String nwcSecret) async {
+    nwcConnection = await ndk.nwc.connect(nwcSecret.trim());
+    update();
+    await FlutterSecureStorage().write(
+      key: "NWC_SECRET",
+      value: nwcSecret.trim(),
+    );
+  }
+
+  void zap(Nip01Event event) async {
+    if (nwcConnection == null) return;
+
+    final metadata = await ndk.metadata.loadMetadata(event.pubKey);
+
+    if (metadata == null) return;
+    if (metadata.lud16 == null) return;
+
+    await ndk.zaps.zap(
+      nwcConnection: nwcConnection!,
+      lnurl: metadata.lud16!,
+      amountSats: 10,
+      comment: "Sent from dart NDK demo app",
+    );
+
+    toastification.show(
+      title: Text(
+        "Zap sent !",
+        style: TextStyle(
+          color: Theme.of(Get.context!).colorScheme.onPrimaryContainer,
+        ),
+      ),
+      alignment: Alignment.bottomRight,
+      autoCloseDuration: Duration(seconds: 4),
+      backgroundColor: Theme.of(Get.context!).colorScheme.primaryContainer,
+      borderSide: BorderSide(
+        color: Theme.of(Get.context!).colorScheme.primaryContainer,
+      ),
+      closeButton: ToastCloseButton(showType: CloseButtonShowType.none),
+      icon: Icon(
+        Icons.bolt,
+        color: Theme.of(Get.context!).colorScheme.onPrimaryContainer,
+      ),
+    );
 
     update();
   }

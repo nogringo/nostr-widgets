@@ -20,7 +20,7 @@ class SigninScreen extends StatelessWidget {
             child: NLogin(
               ndk: Get.find<Ndk>(),
               onLoggedIn: () {
-                Get.toNamed(AppRoutes.profile);
+                Get.offNamed(AppRoutes.profile);
               },
             ),
           ),

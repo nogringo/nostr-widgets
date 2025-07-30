@@ -1,42 +1,25 @@
-import 'package:demo_app/app_routes.dart';
 import 'package:demo_app/controllers/repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_widgets/nostr_widgets.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class FeedTabView extends StatelessWidget {
+  const FeedTabView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Awesome Feed"),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(AppRoutes.profile);
-            },
-            child: NPicture(ndk: Get.find<Ndk>()),
-          ),
-          SizedBox(width: 8),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 500),
-            child: Column(
-              children: [
-                ...Repository.to.publicNotes.map(
-                  (note) => NoteView(event: note),
-                ),
-                SizedBox(height: 100),
-              ],
-            ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 500),
+          child: Column(
+            children: [
+              ...Repository.to.publicNotes.map((note) => NoteView(event: note)),
+              SizedBox(height: 100),
+            ],
           ),
         ),
       ),
@@ -112,7 +95,9 @@ class NoteView extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: OutlinedButton.icon(
-                      onPressed: null,
+                      onPressed: () {
+                        Repository.to.zap(event);
+                      },
                       label: Text("Zap"),
                       icon: Icon(Icons.bolt),
                     ),

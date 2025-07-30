@@ -2,7 +2,7 @@ import 'package:demo_app/app_routes.dart';
 import 'package:demo_app/controllers/repository.dart';
 import 'package:demo_app/get_database.dart';
 import 'package:demo_app/middlewares/auth_middleware.dart';
-import 'package:demo_app/screens/home_screen.dart';
+import 'package:demo_app/screens/home/home_screen.dart';
 import 'package:demo_app/screens/profile_screen.dart';
 import 'package:demo_app/screens/signin_screen.dart';
 import 'package:demo_app/screens/switch_account_screen.dart';
@@ -13,6 +13,7 @@ import 'package:nostr_widgets/functions/functions.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:nostr_widgets/l10n/app_localizations.dart' as nostr_widgets;
 import 'package:sembast_cache_manager/sembast_cache_manager.dart';
+import 'package:toastification/toastification.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,30 +38,33 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      localizationsDelegates: [
-        nostr_widgets.AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [Locale('en'), Locale('es')],
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      initialRoute: AppRoutes.profile,
-      getPages: [
-        GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
-        GetPage(name: AppRoutes.signIn, page: () => const SigninScreen()),
-        GetPage(
-          name: AppRoutes.switchAccount,
-          page: () => const SwitchAccountScreen(),
-        ),
-        GetPage(
-          name: AppRoutes.profile,
-          page: () => const ProfileScreen(),
-          middlewares: [AuthMiddleware()],
-        ),
-      ],
+    return ToastificationWrapper(
+      child: GetMaterialApp(
+        title: "Demo app",
+        localizationsDelegates: [
+          nostr_widgets.AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [Locale('en')],
+        theme: ThemeData.light(),
+        darkTheme: ThemeData.dark(),
+        initialRoute: AppRoutes.home,
+        getPages: [
+          GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
+          GetPage(name: AppRoutes.signIn, page: () => const SigninScreen()),
+          GetPage(
+            name: AppRoutes.switchAccount,
+            page: () => const SwitchAccountScreen(),
+          ),
+          GetPage(
+            name: AppRoutes.profile,
+            page: () => const ProfileScreen(),
+            middlewares: [AuthMiddleware()],
+          ),
+        ],
+      ),
     );
   }
 }
