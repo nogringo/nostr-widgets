@@ -11,7 +11,17 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.home);
+            },
+            icon: Icon(Icons.home),
+          ),
+          SizedBox(width: 8),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Align(
           alignment: Alignment.topCenter,

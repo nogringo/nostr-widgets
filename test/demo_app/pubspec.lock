@@ -245,6 +245,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
+  idb_shim:
+    dependency: transitive
+    description:
+      name: idb_shim
+      sha256: ee391deb010143823d25db15f8b002945e19dcb5f2dd5b696a98cb6db7644012
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.6.7"
   intl:
     dependency: "direct main"
     description:
@@ -373,7 +381,7 @@ packages:
     source: path
     version: "0.0.2"
   path:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path
       sha256: "75cca69d1490965be98c73ceaea117e8a04dd21217b37b292c9ddbec0d955bc5"
@@ -381,7 +389,7 @@ packages:
     source: hosted
     version: "1.9.1"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
@@ -468,6 +476,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  sembast:
+    dependency: "direct main"
+    description:
+      name: sembast
+      sha256: "7119cf6f79bd1d48c8ec7943f4facd96c15ab26823021ed0792a487c7cd34441"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.8.5+1"
+  sembast_cache_manager:
+    dependency: "direct main"
+    description:
+      name: sembast_cache_manager
+      sha256: fffda256964267f5f185d41f840f014fa55c2db4272675f96af1f67435827273
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
+  sembast_web:
+    dependency: "direct main"
+    description:
+      name: sembast_web
+      sha256: "0362c7c241ad6546d3e27b4cfffaae505e5a9661e238dbcdd176756cc960fe7a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.2"
   sky_engine:
     dependency: transitive
     description: flutter

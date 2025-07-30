@@ -1,3 +1,4 @@
 ## 0.0.2
 
-- Add an example
+- Add demo app
+- Multi accounts support
