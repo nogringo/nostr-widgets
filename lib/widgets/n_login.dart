@@ -186,7 +186,11 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    ndk.accounts.loginPublicKey(pubkey: pubkey);
+    if (ndk.accounts.hasAccount(pubkey)) {
+      ndk.accounts.switchAccount(pubkey: pubkey);
+    } else {
+      ndk.accounts.loginPublicKey(pubkey: pubkey);
+    }
 
     await nSaveAccountsState(ndk);
 
@@ -201,10 +205,16 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    ndk.accounts.loginPrivateKey(
-      pubkey: keyPair.publicKey,
-      privkey: keyPair.privateKey,
-    );
+    final pubkey = keyPair.publicKey;
+
+    if (ndk.accounts.hasAccount(pubkey)) {
+      ndk.accounts.switchAccount(pubkey: pubkey);
+    } else {
+      ndk.accounts.loginPrivateKey(
+        pubkey: pubkey,
+        privkey: keyPair.privateKey,
+      );
+    }
 
     await nSaveAccountsState(ndk);
 
@@ -231,7 +241,11 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    ndk.accounts.loginPublicKey(pubkey: pubkey);
+    if (ndk.accounts.hasAccount(pubkey)) {
+      ndk.accounts.switchAccount(pubkey: pubkey);
+    } else {
+      ndk.accounts.loginPublicKey(pubkey: pubkey);
+    }
 
     await nSaveAccountsState(ndk);
 
@@ -250,9 +264,13 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    await signer.getPublicKeyAsync();
+    final pubkey = await signer.getPublicKeyAsync();
 
-    ndk.accounts.loginExternalSigner(signer: signer);
+    if (ndk.accounts.hasAccount(pubkey)) {
+      ndk.accounts.switchAccount(pubkey: pubkey);
+    } else {
+      ndk.accounts.loginExternalSigner(signer: signer);
+    }
 
     await nSaveAccountsState(ndk);
 

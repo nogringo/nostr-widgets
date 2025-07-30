@@ -39,6 +39,8 @@ class ProfileScreen extends StatelessWidget {
                         // if (Get.find<Ndk>().accounts.) {
                         //   Get.offAllNamed(AppRoutes.signIn);
                         // }
+
+                        Repository.to.update();
                       },
                     );
                   },
