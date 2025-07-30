@@ -29,12 +29,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd test/demo_app
+          cd example/demo_app
           flutter pub get
 
       - name: Build Flutter web
         run: |
-          cd test/demo_app
+          cd example/demo_app
           flutter build web --release --base-href="/nostr-widgets/"
 
       - name: Setup Pages
@@ -43,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'test/demo_app/build/web'
+          path: 'example/demo_app/build/web'
 
   deploy:
     environment:
