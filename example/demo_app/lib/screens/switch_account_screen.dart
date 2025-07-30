@@ -1,4 +1,5 @@
 import 'package:demo_app/app_routes.dart';
+import 'package:demo_app/controllers/repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
@@ -15,11 +16,23 @@ class SwitchAccountScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Switch account"),
         actions: [
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(AppRoutes.profile);
+          GetBuilder<Repository>(
+            builder: (c) {
+              if (c.ndk.accounts.isLoggedIn) {
+                return GestureDetector(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.profile);
+                  },
+                  child: NPicture(ndk: Get.find<Ndk>()),
+                );
+              }
+              return TextButton(
+                onPressed: () {
+                  Get.toNamed(AppRoutes.signIn);
+                },
+                child: Text("Sign in"),
+              );
             },
-            child: NPicture(ndk: Get.find<Ndk>()),
           ),
           SizedBox(width: 8),
         ],
@@ -27,7 +40,7 @@ class SwitchAccountScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         child: Align(
-          alignment: Alignment.topCenter,
+          alignment: Alignment.center,
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 500),
             child: Column(

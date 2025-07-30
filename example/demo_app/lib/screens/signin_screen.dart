@@ -1,4 +1,5 @@
 import 'package:demo_app/app_routes.dart';
+import 'package:demo_app/controllers/repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
@@ -21,6 +22,7 @@ class SigninScreen extends StatelessWidget {
               ndk: Get.find<Ndk>(),
               onLoggedIn: () {
                 Get.offNamed(AppRoutes.profile);
+                Repository.to.update();
               },
             ),
           ),

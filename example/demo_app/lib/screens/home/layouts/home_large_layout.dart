@@ -15,11 +15,23 @@ class HomeLargeLayout extends StatelessWidget {
       appBar: AppBar(
         title: Text("Demo app"),
         actions: [
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(AppRoutes.profile);
+          GetBuilder<Repository>(
+            builder: (c) {
+              if (c.ndk.accounts.isLoggedIn) {
+                return GestureDetector(
+                  onTap: () {
+                    Get.toNamed(AppRoutes.profile);
+                  },
+                  child: NPicture(ndk: Get.find<Ndk>()),
+                );
+              }
+              return TextButton(
+                onPressed: () {
+                  Get.toNamed(AppRoutes.signIn);
+                },
+                child: Text("Sign in"),
+              );
             },
-            child: NPicture(ndk: Get.find<Ndk>()),
           ),
           SizedBox(width: 8),
         ],
