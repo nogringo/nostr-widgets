@@ -13,7 +13,7 @@ class HomeSmallLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Awesome Feed"),
+        title: Text("Demo app"),
         actions: [
           GestureDetector(
             onTap: () {

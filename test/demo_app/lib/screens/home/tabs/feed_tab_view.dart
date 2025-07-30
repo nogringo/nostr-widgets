@@ -15,11 +15,15 @@ class FeedTabView extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: 500),
-          child: Column(
-            children: [
-              ...Repository.to.publicNotes.map((note) => NoteView(event: note)),
-              SizedBox(height: 100),
-            ],
+          child: GetBuilder<Repository>(
+            builder: (c) {
+              return Column(
+                children: [
+                  ...Repository.to.publicNotes.map((note) => NoteView(event: note)),
+                  SizedBox(height: 100),
+                ],
+              );
+            }
           ),
         ),
       ),
@@ -94,12 +98,18 @@ class NoteView extends StatelessWidget {
                   SizedBox(height: 8),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Repository.to.zap(event);
-                      },
-                      label: Text("Zap"),
-                      icon: Icon(Icons.bolt),
+                    child: GetBuilder<Repository>(
+                      builder: (c) {
+                        return OutlinedButton.icon(
+                          onPressed: Repository.to.nwcConnection == null
+                              ? null
+                              : () {
+                                  Repository.to.zap(event);
+                                },
+                          label: Text("Zap"),
+                          icon: Icon(Icons.bolt),
+                        );
+                      }
                     ),
                   ),
                 ],

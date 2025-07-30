@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -17,7 +16,7 @@ class Repository extends GetxController {
   Ndk get ndk => Get.find();
 
   Repository() {
-    fetchNotes();
+    initApp();
   }
 
   void initApp() async {
@@ -59,6 +58,13 @@ class Repository extends GetxController {
       key: "NWC_SECRET",
       value: nwcSecret.trim(),
     );
+  }
+
+  void disconnectNWC() async {
+    await ndk.nwc.disconnect(nwcConnection!);
+    nwcConnection = null;
+    update();
+    await FlutterSecureStorage().delete(key: "NWC_SECRET");
   }
 
   void zap(Nip01Event event) async {

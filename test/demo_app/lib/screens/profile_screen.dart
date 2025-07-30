@@ -101,7 +101,9 @@ class NWCView extends StatelessWidget {
           children: [
             Text(
               "Balance",
-              style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).dividerColor),
+              style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                color: Theme.of(context).dividerColor,
+              ),
             ),
             Spacer(),
             FutureBuilder(
@@ -111,7 +113,9 @@ class NWCView extends StatelessWidget {
               builder: (context, snapshot) {
                 return Text(
                   snapshot.hasData ? snapshot.data!.balanceSats.toString() : "",
-                  style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Theme.of(context).dividerColor),
+                  style: Theme.of(context).textTheme.displaySmall!.copyWith(
+                    color: Theme.of(context).dividerColor,
+                  ),
                 );
               },
             ),
@@ -121,9 +125,7 @@ class NWCView extends StatelessWidget {
         ),
         SizedBox(height: 16),
         OutlinedButton.icon(
-          onPressed: () {
-            Get.toNamed(AppRoutes.switchAccount);
-          },
+          onPressed: Repository.to.disconnectNWC,
           label: Text("Disconnect NWC"),
           icon: Icon(Icons.link_off),
         ),
