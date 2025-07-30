@@ -210,10 +210,7 @@ class NLogin extends StatelessWidget {
     if (ndk.accounts.hasAccount(pubkey)) {
       ndk.accounts.switchAccount(pubkey: pubkey);
     } else {
-      ndk.accounts.loginPrivateKey(
-        pubkey: pubkey,
-        privkey: keyPair.privateKey,
-      );
+      ndk.accounts.loginPrivateKey(pubkey: pubkey, privkey: keyPair.privateKey);
     }
 
     await nSaveAccountsState(ndk);

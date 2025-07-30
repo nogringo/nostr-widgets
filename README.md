@@ -1,5 +1,9 @@
 This package helps you to easily produce Nostr apps by providing generics Widgets and methods.
 
+## Demo app
+
+The demo app is available [here](https://nogringo.github.io/nostr-widgets/)
+
 ## Features
 
 - Nostr widgets
@@ -7,12 +11,28 @@ This package helps you to easily produce Nostr apps by providing generics Widget
 
 ## Getting started
 
+### Add dependencies
+
 ```bash
 flutter pub add ndk
 flutter pub add nostr_widgets
 ```
 
+### Add internationalization
+
+Follow https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization
+
+```dart
+import 'package:nostr_widgets/l10n/app_localizations.dart' as nostr_widgets;
+
+localizationsDelegates: [
+    nostr_widgets.AppLocalizations.delegate,
+],
+```
+
 ## Usage
+
+By default, the logged user is used for user widgets, you can overwrite it by providing the pubkey parameter when available.
 
 ```dart
 import 'package:nostr_widgets/nostr_widgets.dart';
@@ -31,11 +51,15 @@ final userPage = ListView(
     ],
 );
 
-// call this to connect user from local storage
-nRestoreLastSession(ndk);
+final userBanner = NBanner(ndk);
+final userPicture = NPicture(ndk);
+final userName = NName(ndk);
 
-// logout the user and delete his local storage
-nLogout(ndk);
+// call this to connect user from local storage
+nRestoreAccounts(ndk);
+
+// call this every time the auth state change
+nSaveAccountsState(ndk);
 ```
 
 ## TODO
@@ -43,3 +67,7 @@ nLogout(ndk);
 - [ ] NPicture letter as big as possible
 - [ ] NUserProfile optionnal show nsec and copy
 - [ ] NUserProfile show the letter in the Picture and make it as big as possible
+
+## Need more Widgets
+
+Open an Issue or ask me on Nostr npub1kg4sdvz3l4fr99n2jdz2vdxe2mpacva87hkdetv76ywacsfq5leqquw5te

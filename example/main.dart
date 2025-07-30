@@ -14,9 +14,7 @@ class MyApp extends StatelessWidget {
     final ndk = Ndk.defaultConfig();
 
     return MaterialApp(
-      home: Scaffold(
-        body: NLogin(ndk: ndk),
-      ),
+      home: Scaffold(body: NLogin(ndk: ndk)),
     );
   }
 }

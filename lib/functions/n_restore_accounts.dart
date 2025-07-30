@@ -53,7 +53,8 @@ Future<void> nRestoreAccounts(Ndk ndk) async {
     ndk.accounts.switchAccount(pubkey: accounts.loggedAccount!);
   }
 
-  if (ndk.accounts.getLoggedAccount() == null && ndk.accounts.accounts.isNotEmpty) {
+  if (ndk.accounts.getLoggedAccount() == null &&
+      ndk.accounts.accounts.isNotEmpty) {
     final pubkey = ndk.accounts.accounts.values.first.pubkey;
     ndk.accounts.switchAccount(pubkey: pubkey);
   }

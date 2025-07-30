@@ -63,9 +63,5 @@
   "getStarted": "Get Started",
   "@getStarted": {
     "description": "Button text to get started with Nostr"
-  },
-  "logout": "Logout",
-  "@logout": {
-    "description": "Button text to logout from the application"
   }
 }

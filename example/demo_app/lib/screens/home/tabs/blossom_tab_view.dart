@@ -5,8 +5,6 @@ class BlossomTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("Blossom"),
-    );
+    return Center(child: Text("Blossom"));
   }
 }

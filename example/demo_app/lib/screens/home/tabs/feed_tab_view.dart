@@ -19,11 +19,13 @@ class FeedTabView extends StatelessWidget {
             builder: (c) {
               return Column(
                 children: [
-                  ...Repository.to.publicNotes.map((note) => NoteView(event: note)),
+                  ...Repository.to.publicNotes.map(
+                    (note) => NoteView(event: note),
+                  ),
                   SizedBox(height: 100),
                 ],
               );
-            }
+            },
           ),
         ),
       ),
@@ -109,7 +111,7 @@ class NoteView extends StatelessWidget {
                           label: Text("Zap"),
                           icon: Icon(Icons.bolt),
                         );
-                      }
+                      },
                     ),
                   ),
                 ],
