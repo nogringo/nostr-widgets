@@ -5,17 +5,34 @@ import 'package:nostr_widgets/functions/get_color_from_pubkey.dart';
 class NPicture extends StatelessWidget {
   final Ndk ndk;
   final String? pubkey;
+  final bool useCircleAvatar;
+  final double? circleAvatarRadius;
 
   String? get _pubkey => pubkey ?? ndk.accounts.getPublicKey();
 
-  const NPicture({super.key, required this.ndk, this.pubkey});
+  const NPicture({
+    super.key,
+    required this.ndk,
+    this.pubkey,
+    this.useCircleAvatar = true,
+    this.circleAvatarRadius,
+  });
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: ndk.metadata.loadMetadata(_pubkey!),
       builder: (context, snapshot) {
-        return _buildPictureContent(context, snapshot);
+        final picture = _buildPictureContent(context, snapshot);
+
+        if (useCircleAvatar) {
+          return CircleAvatar(
+            radius: circleAvatarRadius,
+            child: ClipOval(child: picture),
+          );
+        }
+
+        return picture;
       },
     );
   }

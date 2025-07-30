@@ -31,6 +31,8 @@ class Repository extends GetxController {
       publicNotes.add(event);
     }
 
+    publicNotes.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
     update();
   }
 }

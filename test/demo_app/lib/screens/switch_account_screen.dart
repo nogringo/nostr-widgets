@@ -12,8 +12,20 @@ class SwitchAccountScreen extends StatelessWidget {
     final ndk = Get.find<Ndk>();
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("Switch account"),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Get.toNamed(AppRoutes.profile);
+            },
+            child: NPicture(ndk: Get.find<Ndk>()),
+          ),
+          SizedBox(width: 8),
+        ],
+      ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
@@ -28,11 +40,7 @@ class SwitchAccountScreen extends StatelessWidget {
                     .map((account) {
                       return TapView(
                         child: ListTile(
-                          leading: CircleAvatar(
-                            child: ClipOval(
-                              child: NPicture(ndk: ndk, pubkey: account.pubkey),
-                            ),
-                          ),
+                          leading: NPicture(ndk: ndk, pubkey: account.pubkey),
                           title: NName(pubkey: account.pubkey, ndk: ndk),
                           onTap: () async {
                             ndk.accounts.switchAccount(pubkey: account.pubkey);

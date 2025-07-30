@@ -12,6 +12,7 @@ class SigninScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         child: Align(
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
