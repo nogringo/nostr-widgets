@@ -1,20 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nip01/nip01.dart';
 import 'package:nip07_event_signer/nip07_event_signer.dart';
 import 'package:nip19/nip19.dart';
 import 'package:nostr_widgets/controllers/n_login_controller.dart';
-import 'package:nostr_widgets/functions/n_logout.dart';
 import 'package:nostr_widgets/functions/fetch_nip05.dart';
+import 'package:nostr_widgets/functions/n_save_accounts_state.dart';
 import 'package:nostr_widgets/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NLogin extends StatelessWidget {
-  static const _storage = FlutterSecureStorage();
-
   final Ndk ndk;
   final void Function()? onLoggedIn;
   final bool enableAccountCreation;
@@ -22,6 +19,7 @@ class NLogin extends StatelessWidget {
   final bool enableNpubLogin;
   final bool enableNsecLogin;
   final bool enableNip07Login;
+  final bool enablePubkeyLogin;
 
   const NLogin({
     super.key,
@@ -32,6 +30,7 @@ class NLogin extends StatelessWidget {
     this.enableNpubLogin = true,
     this.enableNsecLogin = true,
     this.enableNip07Login = true,
+    this.enablePubkeyLogin = true,
   });
 
   @override
@@ -170,8 +169,8 @@ class NLogin extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (enableNip05Login) nip05View,
-        if (enableNpubLogin) npubView,
+        if (enablePubkeyLogin && enableNip05Login) nip05View,
+        if (enablePubkeyLogin && enableNpubLogin) npubView,
         if (enableNsecLogin) nsecView,
         if (enableNip07Login && kIsWeb) nip07View,
         if (enableAccountCreation) createAccountView,
@@ -187,11 +186,9 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    await nLogout(ndk);
     ndk.accounts.loginPublicKey(pubkey: pubkey);
 
-    await _storage.write(key: "ndk_ui_login_with", value: "npub");
-    await _storage.write(key: "ndk_ui_pubkey", value: pubkey);
+    await nSaveAccountsState(ndk);
 
     loggedIn();
   }
@@ -204,14 +201,12 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    await nLogout(ndk);
     ndk.accounts.loginPrivateKey(
       pubkey: keyPair.publicKey,
       privkey: keyPair.privateKey,
     );
 
-    await _storage.write(key: "ndk_ui_login_with", value: "nsec");
-    await _storage.write(key: "ndk_ui_privkey", value: keyPair.privateKey);
+    await nSaveAccountsState(ndk);
 
     loggedIn();
   }
@@ -236,10 +231,9 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    await nLogout(ndk);
     ndk.accounts.loginPublicKey(pubkey: pubkey);
 
-    await _storage.write(key: "ndk_ui_login_with", value: "nip05");
+    await nSaveAccountsState(ndk);
 
     loggedIn();
   }
@@ -258,10 +252,9 @@ class NLogin extends StatelessWidget {
 
     await signer.getPublicKeyAsync();
 
-    await nLogout(ndk);
     ndk.accounts.loginExternalSigner(signer: signer);
 
-    await _storage.write(key: "ndk_ui_login_with", value: "nip07");
+    await nSaveAccountsState(ndk);
 
     loggedIn();
   }

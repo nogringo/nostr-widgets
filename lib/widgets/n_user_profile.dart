@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nip19/nip19.dart';
-import 'package:nostr_widgets/functions/n_logout.dart';
 import 'package:nostr_widgets/functions/get_color_from_pubkey.dart';
+import 'package:nostr_widgets/functions/n_save_accounts_state.dart';
 import 'package:nostr_widgets/l10n/app_localizations.dart';
 
 class NUserProfile extends StatelessWidget {
   final Ndk ndk;
+  final String? pubkey;
   final bool showLogoutButton;
   final bool showName;
   final bool showNip05Indicator;
   final bool showNip05;
   final VoidCallback? onLogout;
 
+  String? get profilePubkey => pubkey ?? ndk.accounts.getPublicKey();
+
   const NUserProfile({
     super.key,
     required this.ndk,
+    this.pubkey,
     this.showLogoutButton = true,
     this.showName = true,
     this.showNip05Indicator = true,
@@ -25,20 +29,18 @@ class NUserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pubkey = ndk.accounts.getPublicKey();
+    if (profilePubkey == null) return Container();
 
-    if (pubkey == null) return Container();
-
-    final pkColor = getColorFromPubkey(pubkey);
+    final pkColor = getColorFromPubkey(profilePubkey!);
     final pubkeyColorScheme = ColorScheme.fromSeed(
       seedColor: pkColor,
       brightness: Theme.of(context).brightness,
     );
 
     return FutureBuilder(
-      future: ndk.metadata.loadMetadata(pubkey),
+      future: ndk.metadata.loadMetadata(profilePubkey!),
       builder: (context, snapshot) {
-        String name = _formatNpub(pubkey);
+        String name = _formatNpub(profilePubkey!);
         String? nip05;
         Widget banner = Container(
           height: 10,
@@ -92,7 +94,19 @@ class NUserProfile extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           FilledButton.icon(
-                            onPressed: onLogout ?? () => nLogout(ndk),
+                            onPressed: () async {
+                              ndk.accounts.logout();
+
+                              if (ndk.accounts.accounts.isNotEmpty) {
+                                final pubkey =
+                                    ndk.accounts.accounts.values.first.pubkey;
+                                ndk.accounts.switchAccount(pubkey: pubkey);
+                              }
+
+                              await nSaveAccountsState(ndk);
+
+                              if (onLogout != null) onLogout!();
+                            },
                             label: Text(AppLocalizations.of(context)!.logout),
                             icon: Icon(Icons.logout),
                           ),

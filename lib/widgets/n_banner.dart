@@ -4,14 +4,16 @@ import 'package:nostr_widgets/functions/get_color_from_pubkey.dart';
 
 class NBanner extends StatelessWidget {
   final Ndk ndk;
-  final String pubKey;
+  final String? pubkey;
 
-  const NBanner({super.key, required this.ndk, required this.pubKey});
+  String? get _pubkey => pubkey ?? ndk.accounts.getPublicKey();
+
+  const NBanner({super.key, required this.ndk, this.pubkey});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ndk.metadata.loadMetadata(pubKey),
+      future: ndk.metadata.loadMetadata(_pubkey!),
       builder: (context, snapshot) {
         return _buildBannerContent(context, snapshot);
       },
@@ -36,7 +38,7 @@ class NBanner extends StatelessWidget {
 
   Widget _buildDefaultBanner(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: getColorFromPubkey(pubKey),
+      seedColor: getColorFromPubkey(_pubkey!),
       brightness: Theme.of(context).brightness,
     );
 
@@ -55,7 +57,7 @@ class NBanner extends StatelessWidget {
         if (loadingProgress == null) return child;
 
         return ColoredBox(
-          color: getColorFromPubkey(pubKey).withValues(alpha: 0.3),
+          color: getColorFromPubkey(_pubkey!).withValues(alpha: 0.3),
         );
       },
       errorBuilder: (context, error, stackTrace) {

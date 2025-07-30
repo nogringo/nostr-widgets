@@ -7,11 +7,11 @@ import 'package:crypto/crypto.dart';
 /// This implementation uses SHA-256 hashing for better distribution
 /// and follows common practices in the Nostr ecosystem for visual
 /// identification of users.
-Color getColorFromPubkey(String pubKey) {
-  if (pubKey.isEmpty) return const Color(0xFF808080);
+Color getColorFromPubkey(String pubkey) {
+  if (pubkey.isEmpty) return const Color(0xFF808080);
 
   // Hash the pubkey using SHA-256 for better distribution
-  final bytes = utf8.encode(pubKey);
+  final bytes = utf8.encode(pubkey);
   final digest = sha256.convert(bytes);
 
   // Use first 3 bytes of hash for RGB values

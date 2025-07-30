@@ -3,17 +3,19 @@ import 'package:ndk/ndk.dart';
 import 'package:nip19/nip19.dart';
 
 class NName extends StatelessWidget {
-  final String pubkey;
   final Ndk ndk;
+  final String? pubkey;
   final TextStyle? style;
   final int? maxLines;
   final TextOverflow? overflow;
   final bool displayNpub;
 
+  String? get _pubkey => pubkey ?? ndk.accounts.getPublicKey();
+
   const NName({
     super.key,
-    required this.pubkey,
     required this.ndk,
+    this.pubkey,
     this.style,
     this.maxLines = 1,
     this.overflow = TextOverflow.ellipsis,
@@ -35,7 +37,7 @@ class NName extends StatelessWidget {
         }
 
         return Text(
-          displayNpub ? _formatNpub(pubkey) : _formatPubkey(pubkey),
+          displayNpub ? _formatNpub(_pubkey!) : _formatPubkey(_pubkey!),
           style: style,
           maxLines: maxLines,
           overflow: overflow,
@@ -46,7 +48,7 @@ class NName extends StatelessWidget {
 
   Future<String?> _getName() async {
     try {
-      final userMetadata = await ndk.metadata.loadMetadata(pubkey);
+      final userMetadata = await ndk.metadata.loadMetadata(_pubkey!);
       return userMetadata?.getName();
     } catch (e) {
       return null;
