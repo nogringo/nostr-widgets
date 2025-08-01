@@ -28,7 +28,12 @@ class NPicture extends StatelessWidget {
         if (useCircleAvatar) {
           return CircleAvatar(
             radius: circleAvatarRadius,
-            child: ClipOval(child: picture),
+            child: ClipOval(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: picture,
+              ),
+            ),
           );
         }
 

@@ -1,10 +1,5 @@
-## 0.0.3
+## 0.0.4
 
-- Add demo app
-- Multi accounts support
+### Fix
 
-### Breaking changes
-
-- `nRestoreLastSession` to `nRestoreAccounts`
-- `nLogout` is deleted : use `ndk.accounts.logout()` and then `nSaveAccountsState(ndk)`
-- every `pubKey` was renamed to `pubkey`
+- User picture correctly cover the parent

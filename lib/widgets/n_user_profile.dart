@@ -54,11 +54,11 @@ class NUserProfile extends StatelessWidget {
           name = metadata.getName();
 
           if (metadata.banner != null) {
-            banner = Image.network(metadata.banner!);
+            banner = Image.network(metadata.banner!, fit: BoxFit.cover);
           }
 
           if (metadata.picture != null) {
-            picture = Image.network(metadata.picture!);
+            picture = Image.network(metadata.picture!, fit: BoxFit.cover);
           }
 
           if (metadata.cleanNip05 != null) {
@@ -120,7 +120,9 @@ class NUserProfile extends StatelessWidget {
                   left: 32,
                   child: CircleAvatar(
                     radius: 40,
-                    child: ClipOval(child: picture),
+                    child: ClipOval(
+                      child: AspectRatio(aspectRatio: 1, child: picture),
+                    ),
                   ),
                 ),
               ],
