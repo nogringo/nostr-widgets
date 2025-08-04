@@ -19,6 +19,7 @@ class NLogin extends StatelessWidget {
   final bool enableNpubLogin;
   final bool enableNsecLogin;
   final bool enableNip07Login;
+  final bool enableAmberLogin;
   final bool enablePubkeyLogin;
 
   const NLogin({
@@ -30,12 +31,13 @@ class NLogin extends StatelessWidget {
     this.enableNpubLogin = true,
     this.enableNsecLogin = true,
     this.enableNip07Login = true,
+    this.enableAmberLogin = true,
     this.enablePubkeyLogin = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    Get.put(NLoginController());
+    Get.put(NLoginController(ndk: ndk, onLoggedIn: onLoggedIn));
 
     const double bottomPadding = 16;
 
@@ -166,6 +168,19 @@ class NLogin extends StatelessWidget {
       ),
     );
 
+    final amberView = Padding(
+      padding: EdgeInsetsGeometry.only(bottom: bottomPadding),
+      child: Obx(() {
+        return FilledButton.icon(
+          onPressed: NLoginController.to.isWaitingForAmber.value
+              ? null
+              : NLoginController.to.loginWithAmber,
+          label: Text("Login with amber"),
+          icon: Icon(Icons.diamond),
+        );
+      }),
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -173,6 +188,7 @@ class NLogin extends StatelessWidget {
         if (enablePubkeyLogin && enableNpubLogin) npubView,
         if (enableNsecLogin) nsecView,
         if (enableNip07Login && kIsWeb) nip07View,
+        if (enableAmberLogin && GetPlatform.isAndroid) amberView,
         if (enableAccountCreation) createAccountView,
       ],
     );
@@ -194,7 +210,7 @@ class NLogin extends StatelessWidget {
 
     await nSaveAccountsState(ndk);
 
-    loggedIn();
+    NLoginController.to.loggedIn();
   }
 
   Future<void> loginWithNsec(String nsec) async {
@@ -215,7 +231,7 @@ class NLogin extends StatelessWidget {
 
     await nSaveAccountsState(ndk);
 
-    loggedIn();
+    NLoginController.to.loggedIn();
   }
 
   void nip05Change(String _) {
@@ -246,7 +262,7 @@ class NLogin extends StatelessWidget {
 
     await nSaveAccountsState(ndk);
 
-    loggedIn();
+    NLoginController.to.loggedIn();
   }
 
   Future<void> loginWithNip07() async {
@@ -271,10 +287,6 @@ class NLogin extends StatelessWidget {
 
     await nSaveAccountsState(ndk);
 
-    loggedIn();
-  }
-
-  void loggedIn() {
-    if (onLoggedIn != null) onLoggedIn!();
+    NLoginController.to.loggedIn();
   }
 }

@@ -36,17 +36,22 @@ class HomeSmallLayout extends StatelessWidget {
           SizedBox(width: 8),
         ],
       ),
-      body: homeDestinations[Repository.to.selectedIndex.value].destination,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: Repository.to.selectedIndex.value,
-        onDestinationSelected: (value) {
-          Repository.to.selectedIndex.value = value;
-        },
-        destinations: homeDestinations
-            .map(
-              (tab) => NavigationDestination(icon: tab.icon, label: tab.label),
-            )
-            .toList(),
+      body: Obx(
+        () => homeDestinations[Repository.to.selectedIndex.value].destination,
+      ),
+      bottomNavigationBar: Obx(
+        () => NavigationBar(
+          selectedIndex: Repository.to.selectedIndex.value,
+          onDestinationSelected: (value) {
+            Repository.to.selectedIndex.value = value;
+          },
+          destinations: homeDestinations
+              .map(
+                (tab) =>
+                    NavigationDestination(icon: tab.icon, label: tab.label),
+              )
+              .toList(),
+        ),
       ),
     );
   }

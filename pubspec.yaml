@@ -13,6 +13,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  amberflutter: ^0.0.9
   crypto: ^3.0.6
   flutter:
     sdk: flutter
@@ -23,6 +24,7 @@ dependencies:
   http: ^1.4.0
   intl: ^0.20.2
   ndk: ^0.5.0
+  ndk_amber: ^0.3.2
   nip01: ^0.3.0+1
   nip07_event_signer: ^1.0.2
   nip19: ^0.2.0

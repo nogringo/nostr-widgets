@@ -73,15 +73,12 @@ class NUserProfile extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    ClipPath(
-                      clipper: BannerWithHoleClipper(),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: SizedBox(
-                          height: 100,
-                          width: double.maxFinite,
-                          child: FittedBox(fit: BoxFit.cover, child: banner),
-                        ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: SizedBox(
+                        height: 100,
+                        width: double.maxFinite,
+                        child: FittedBox(fit: BoxFit.cover, child: banner),
                       ),
                     ),
                     SizedBox(height: 8),
@@ -118,10 +115,16 @@ class NUserProfile extends StatelessWidget {
                 Positioned(
                   bottom: 0,
                   left: 32,
-                  child: CircleAvatar(
-                    radius: 40,
-                    child: ClipOval(
-                      child: AspectRatio(aspectRatio: 1, child: picture),
+                  child: ClipOval(
+                    child: Container(
+                      color: Theme.of(context).colorScheme.surface,
+                      padding: EdgeInsets.all(8),
+                      child: CircleAvatar(
+                        radius: 40,
+                        child: ClipOval(
+                          child: AspectRatio(aspectRatio: 1, child: picture),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -165,22 +168,4 @@ class NUserProfile extends StatelessWidget {
       return _formatPubkey(pubkey);
     }
   }
-}
-
-class BannerWithHoleClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-
-    final circlePath = Path();
-    circlePath.addOval(
-      Rect.fromCircle(center: Offset(16 + 48 + 8, size.height), radius: 48),
-    );
-
-    return Path.combine(PathOperation.difference, path, circlePath);
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
