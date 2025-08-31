@@ -23,11 +23,12 @@ dependencies:
   get: ^4.7.2
   http: ^1.4.0
   intl: ^0.20.2
-  ndk: ^0.5.0
+  ndk: ^0.5.1
   ndk_amber: ^0.3.2
   nip01: ^0.3.0+1
   nip07_event_signer: ^1.0.2
   nip19: ^0.2.0
+  pretty_qr_code: ^3.5.0
   url_launcher: ^6.3.2
 
 dev_dependencies:

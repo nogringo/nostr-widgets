@@ -19,8 +19,12 @@ class NLogin extends StatelessWidget {
   final bool enableNpubLogin;
   final bool enableNsecLogin;
   final bool enableNip07Login;
+  final bool enableBunkerLogin;
   final bool enableAmberLogin;
   final bool enablePubkeyLogin;
+  final NostrConnect? nostrConnect;
+
+  bool get enableNostrConnectLogin => nostrConnect != null;
 
   const NLogin({
     super.key,
@@ -31,13 +35,21 @@ class NLogin extends StatelessWidget {
     this.enableNpubLogin = true,
     this.enableNsecLogin = true,
     this.enableNip07Login = true,
+    this.enableBunkerLogin = true,
     this.enableAmberLogin = true,
     this.enablePubkeyLogin = true,
+    this.nostrConnect,
   });
 
   @override
   Widget build(BuildContext context) {
-    Get.put(NLoginController(ndk: ndk, onLoggedIn: onLoggedIn));
+    Get.put(
+      NLoginController(
+        ndk: ndk,
+        onLoggedIn: onLoggedIn,
+        nostrConnect: nostrConnect,
+      ),
+    );
 
     const double bottomPadding = 16;
 
@@ -168,6 +180,51 @@ class NLogin extends StatelessWidget {
       ),
     );
 
+    final bunkerView = Padding(
+      padding: EdgeInsetsGeometry.only(bottom: bottomPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text("Bunker", style: Theme.of(context).textTheme.labelLarge),
+          if (enableBunkerLogin)
+            TextField(
+              controller: NLoginController.to.bunkerFieldController,
+              decoration: InputDecoration(hintText: "bunker://"),
+              onChanged: (_) => NLoginController.to.update(),
+            ),
+          if (enableBunkerLogin)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: GetBuilder<NLoginController>(
+                builder: (c) {
+                  return Obx(() {
+                    return FilledButton(
+                      onPressed: c.isValidBunkerUrl && !c.isBunkerLoading.value
+                          ? c.loginWithBunkerUrl
+                          : null,
+                      child: Text(
+                        c.isBunkerLoading.value
+                            ? "Loading..."
+                            : "Login with bunker",
+                      ),
+                    );
+                  });
+                },
+              ),
+            ),
+          if (enableNostrConnectLogin)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: TextButton.icon(
+                onPressed: NLoginController.to.showNostrConnectQrcode,
+                label: Text("Show nostr connect qrcode"),
+                icon: Icon(Icons.qr_code_2),
+              ),
+            ),
+        ],
+      ),
+    );
+
     final amberView = Padding(
       padding: EdgeInsetsGeometry.only(bottom: bottomPadding),
       child: Obx(() {
@@ -188,6 +245,7 @@ class NLogin extends StatelessWidget {
         if (enablePubkeyLogin && enableNpubLogin) npubView,
         if (enableNsecLogin) nsecView,
         if (enableNip07Login && kIsWeb) nip07View,
+        if (enableBunkerLogin || enableNostrConnectLogin) bunkerView,
         if (enableAmberLogin && GetPlatform.isAndroid) amberView,
         if (enableAccountCreation) createAccountView,
       ],

@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_widgets/nostr_widgets.dart';
 
-class FeedTabView extends StatelessWidget {
-  const FeedTabView({super.key});
+class RequestsTabView extends StatelessWidget {
+  const RequestsTabView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -97,23 +97,6 @@ class NoteView extends StatelessWidget {
                     ],
                   ),
                   Text(event.content.trim()),
-                  SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GetBuilder<Repository>(
-                      builder: (c) {
-                        return OutlinedButton.icon(
-                          onPressed: Repository.to.nwcConnection == null
-                              ? null
-                              : () {
-                                  Repository.to.zap(event);
-                                },
-                          label: Text("Zap"),
-                          icon: Icon(Icons.bolt),
-                        );
-                      },
-                    ),
-                  ),
                 ],
               ),
             ),

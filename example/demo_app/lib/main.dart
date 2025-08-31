@@ -1,11 +1,6 @@
-import 'package:demo_app/app_routes.dart';
 import 'package:demo_app/controllers/repository.dart';
 import 'package:demo_app/get_database.dart';
-import 'package:demo_app/middlewares/auth_middleware.dart';
 import 'package:demo_app/screens/home/home_screen.dart';
-import 'package:demo_app/screens/profile_screen.dart';
-import 'package:demo_app/screens/signin_screen.dart';
-import 'package:demo_app/screens/switch_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
@@ -50,20 +45,7 @@ class MainApp extends StatelessWidget {
         supportedLocales: [Locale('en')],
         theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
-        initialRoute: AppRoutes.home,
-        getPages: [
-          GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
-          GetPage(name: AppRoutes.signIn, page: () => const SigninScreen()),
-          GetPage(
-            name: AppRoutes.switchAccount,
-            page: () => const SwitchAccountScreen(),
-          ),
-          GetPage(
-            name: AppRoutes.profile,
-            page: () => const ProfileScreen(),
-            middlewares: [AuthMiddleware()],
-          ),
-        ],
+        home: HomeScreen(),
       ),
     );
   }

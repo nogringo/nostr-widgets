@@ -1,10 +1,7 @@
-import 'package:demo_app/app_routes.dart';
 import 'package:demo_app/controllers/repository.dart';
 import 'package:demo_app/screens/home/home_destinations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ndk/ndk.dart';
-import 'package:nostr_widgets/nostr_widgets.dart';
 
 class HomeLargeLayout extends StatelessWidget {
   const HomeLargeLayout({super.key});
@@ -12,47 +9,38 @@ class HomeLargeLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Demo app"),
-        actions: [
-          GetBuilder<Repository>(
-            builder: (c) {
-              if (c.ndk.accounts.isLoggedIn) {
-                return GestureDetector(
-                  onTap: () {
-                    Get.toNamed(AppRoutes.profile);
-                  },
-                  child: NPicture(ndk: Get.find<Ndk>()),
-                );
-              }
-              return TextButton(
-                onPressed: () {
-                  Get.toNamed(AppRoutes.signIn);
-                },
-                child: Text("Sign in"),
-              );
-            },
-          ),
-          SizedBox(width: 8),
-        ],
-      ),
+      appBar: AppBar(title: Text("Demo app")),
       body: Obx(() {
         return Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            NavigationRail(
-              selectedIndex: Repository.to.selectedIndex.value,
-              labelType: NavigationRailLabelType.all,
-              onDestinationSelected: (value) {
-                Repository.to.selectedIndex.value = value;
-              },
-              destinations: homeDestinations
-                  .map(
-                    (tab) => NavigationRailDestination(
-                      icon: tab.icon,
-                      label: Text(tab.label),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
                     ),
-                  )
-                  .toList(),
+                    child: IntrinsicHeight(
+                      child: NavigationRail(
+                        extended: true,
+                        selectedIndex: Repository.to.selectedIndex.value,
+                        onDestinationSelected: (value) {
+                          Repository.to.selectedIndex.value = value;
+                        },
+                        destinations: homeDestinations
+                            .map(
+                              (tab) => NavigationRailDestination(
+                                icon: tab.icon,
+                                label: Text(tab.label),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
             Expanded(
               child: homeDestinations[Repository.to.selectedIndex.value]
