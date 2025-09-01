@@ -16,7 +16,7 @@
   "@publicKey": {
     "description": "Label for public key input field"
   },
-  "privateKey": "Private Key",
+  "privateKey": "Private Key (insecure)",
   "@privateKey": {
     "description": "Label for private key input field"
   },
@@ -63,5 +63,39 @@
   "getStarted": "Get Started",
   "@getStarted": {
     "description": "Button text to get started with Nostr"
+  },
+  "bunker": "Bunker",
+  "@bunker": {
+    "description": "Label for bunker login section"
+  },
+  "bunkerAuthentication": "Bunker Authentication",
+  "@bunkerAuthentication": {
+    "description": "Title for bunker authentication toast"
+  },
+  "tapToOpen": "Tap to open: {url}",
+  "@tapToOpen": {
+    "description": "Description for bunker authentication toast",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "https://example.com/auth"
+      }
+    }
+  },
+  "showNostrConnectQrcode": "Show nostr connect qrcode",
+  "@showNostrConnectQrcode": {
+    "description": "Button text to show nostr connect QR code"
+  },
+  "loginWithAmber": "Login with amber",
+  "@loginWithAmber": {
+    "description": "Button text to login with Amber"
+  },
+  "nostrConnectUrl": "Nostr connect URL",
+  "@nostrConnectUrl": {
+    "description": "Title for nostr connect URL dialog"
+  },
+  "copy": "Copy",
+  "@copy": {
+    "description": "Button text to copy to clipboard"
   }
 }

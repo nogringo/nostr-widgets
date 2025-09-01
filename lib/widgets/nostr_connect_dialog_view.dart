@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nostr_widgets/l10n/app_localizations.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 class NostrConnectDialogView extends StatelessWidget {
@@ -12,7 +13,7 @@ class NostrConnectDialogView extends StatelessWidget {
     return Theme(
       data: ThemeData.light(),
       child: AlertDialog(
-        title: Text("Nostr connect URL"),
+        title: Text(AppLocalizations.of(context)!.nostrConnectUrl),
         content: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -34,7 +35,7 @@ class NostrConnectDialogView extends StatelessWidget {
             onPressed: () {
               Clipboard.setData(ClipboardData(text: nostrConnectURL));
             },
-            child: Text("Copy"),
+            child: Text(AppLocalizations.of(context)!.copy),
           ),
         ],
       ),

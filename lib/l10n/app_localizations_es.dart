@@ -21,7 +21,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get publicKey => 'Clave pública';
 
   @override
-  String get privateKey => 'Clave privada';
+  String get privateKey => 'Clave privada (inseguro)';
 
   @override
   String get browserExtension => 'Extensión del navegador';
@@ -55,4 +55,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get getStarted => 'Comenzar';
+
+  @override
+  String get bunker => 'Bunker';
+
+  @override
+  String get bunkerAuthentication => 'Autenticación Bunker';
+
+  @override
+  String tapToOpen(String url) {
+    return 'Toca para abrir: $url';
+  }
+
+  @override
+  String get showNostrConnectQrcode => 'Mostrar código QR de nostr connect';
+
+  @override
+  String get loginWithAmber => 'Iniciar sesión con Amber';
+
+  @override
+  String get nostrConnectUrl => 'URL de conexión Nostr';
+
+  @override
+  String get copy => 'Copiar';
 }

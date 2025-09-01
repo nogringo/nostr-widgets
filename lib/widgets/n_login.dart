@@ -185,7 +185,7 @@ class NLogin extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text("Bunker", style: Theme.of(context).textTheme.labelLarge),
+          Text(AppLocalizations.of(context)!.bunker, style: Theme.of(context).textTheme.labelLarge),
           if (enableBunkerLogin)
             TextField(
               controller: NLoginController.to.bunkerFieldController,
@@ -217,7 +217,7 @@ class NLogin extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8.0),
               child: TextButton.icon(
                 onPressed: NLoginController.to.showNostrConnectQrcode,
-                label: Text("Show nostr connect qrcode"),
+                label: Text(AppLocalizations.of(context)!.showNostrConnectQrcode),
                 icon: Icon(Icons.qr_code_2),
               ),
             ),
@@ -232,7 +232,7 @@ class NLogin extends StatelessWidget {
           onPressed: NLoginController.to.isWaitingForAmber.value
               ? null
               : NLoginController.to.loginWithAmber,
-          label: Text("Login with amber"),
+          label: Text(AppLocalizations.of(context)!.loginWithAmber),
           icon: Icon(Icons.diamond),
         );
       }),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_amber/ndk_amber.dart';
 import 'package:nip19/nip19.dart';
+import 'package:nostr_widgets/l10n/app_localizations.dart';
 import 'package:nostr_widgets/widgets/nostr_connect_dialog_view.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -151,8 +152,8 @@ class NLoginController extends GetxController {
   void showBunkerAuthToast(String challenge) {
     final newToast = toastification.show(
       context: Get.context!,
-      title: Text('Bunker Authentication'),
-      description: Text('Tap to open: $challenge'),
+      title: Text(AppLocalizations.of(Get.context!)!.bunkerAuthentication),
+      description: Text(AppLocalizations.of(Get.context!)!.tapToOpen(challenge)),
       alignment: Alignment.bottomRight,
       type: ToastificationType.info,
       style: ToastificationStyle.flat,

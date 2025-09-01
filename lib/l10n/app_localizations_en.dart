@@ -21,7 +21,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get publicKey => 'Public Key';
 
   @override
-  String get privateKey => 'Private Key';
+  String get privateKey => 'Private Key (insecure)';
 
   @override
   String get browserExtension => 'Browser extension';
@@ -55,4 +55,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get getStarted => 'Get Started';
+
+  @override
+  String get bunker => 'Bunker';
+
+  @override
+  String get bunkerAuthentication => 'Bunker Authentication';
+
+  @override
+  String tapToOpen(String url) {
+    return 'Tap to open: $url';
+  }
+
+  @override
+  String get showNostrConnectQrcode => 'Show nostr connect qrcode';
+
+  @override
+  String get loginWithAmber => 'Login with amber';
+
+  @override
+  String get nostrConnectUrl => 'Nostr connect URL';
+
+  @override
+  String get copy => 'Copy';
 }

@@ -8,6 +8,9 @@ import 'package:intl/intl.dart' as intl;
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ru.dart';
+import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -63,8 +66,7 @@ import 'app_localizations_fr.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +74,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,19 +86,21 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('es'),
     Locale('fr'),
+    Locale('ja'),
+    Locale('ru'),
+    Locale('zh')
   ];
 
   /// Button text for creating a new account
@@ -127,7 +130,7 @@ abstract class AppLocalizations {
   /// Label for private key input field
   ///
   /// In en, this message translates to:
-  /// **'Private Key'**
+  /// **'Private Key (insecure)'**
   String get privateKey;
 
   /// Label for browser extension login section
@@ -195,10 +198,51 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get Started'**
   String get getStarted;
+
+  /// Label for bunker login section
+  ///
+  /// In en, this message translates to:
+  /// **'Bunker'**
+  String get bunker;
+
+  /// Title for bunker authentication toast
+  ///
+  /// In en, this message translates to:
+  /// **'Bunker Authentication'**
+  String get bunkerAuthentication;
+
+  /// Description for bunker authentication toast
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open: {url}'**
+  String tapToOpen(String url);
+
+  /// Button text to show nostr connect QR code
+  ///
+  /// In en, this message translates to:
+  /// **'Show nostr connect qrcode'**
+  String get showNostrConnectQrcode;
+
+  /// Button text to login with Amber
+  ///
+  /// In en, this message translates to:
+  /// **'Login with amber'**
+  String get loginWithAmber;
+
+  /// Title for nostr connect URL dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Nostr connect URL'**
+  String get nostrConnectUrl;
+
+  /// Button text to copy to clipboard
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -207,28 +251,29 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'fr'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'es', 'fr', 'ja', 'ru', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
-    case 'fr':
-      return AppLocalizationsFr();
+    case 'en': return AppLocalizationsEn();
+    case 'es': return AppLocalizationsEs();
+    case 'fr': return AppLocalizationsFr();
+    case 'ja': return AppLocalizationsJa();
+    case 'ru': return AppLocalizationsRu();
+    case 'zh': return AppLocalizationsZh();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }
