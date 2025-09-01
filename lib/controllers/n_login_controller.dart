@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_amber/ndk_amber.dart';
 import 'package:nip19/nip19.dart';
-import 'package:nostr_widgets/widgets/bunker_challenge_dialog_view.dart';
 import 'package:nostr_widgets/widgets/nostr_connect_dialog_view.dart';
+import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NLoginController extends GetxController {
@@ -22,25 +22,26 @@ class NLoginController extends GetxController {
   RxBool isBunkerLoading = false.obs;
   NostrConnect? nostrConnect;
   bool isNostrConnectDialogOpen = false;
+  List<ToastificationItem> challengeToasts = [];
 
   RxBool isWaitingForAmber = false.obs;
 
   bool get isValidBunkerUrl {
     final bunkerText = bunkerFieldController.text.trim();
-    
+
     try {
       final uri = Uri.parse(bunkerText);
-      
+
       // Check if scheme is bunker
       if (uri.scheme != 'bunker') return false;
-      
+
       // Check if host (pubkey) is valid hex (64 characters)
       if (uri.host.length != 64) return false;
       if (!RegExp(r'^[a-fA-F0-9]+$').hasMatch(uri.host)) return false;
-      
+
       // Check if at least one relay parameter exists
       if (!uri.queryParameters.containsKey('relay')) return false;
-      
+
       return true;
     } catch (e) {
       return false;
@@ -52,19 +53,21 @@ class NLoginController extends GetxController {
   Future<void> loginWithBunkerUrl() async {
     isBunkerLoading.value = true;
 
-    final bunkerConnection = await ndk.accounts.loginWithBunkerUrl(
-      bunkerUrl: bunkerFieldController.text.trim(),
-      bunkers: ndk.bunkers,
-      authCallback: (challenge) {
-        Get.dialog(BunkerChallengeDialogView(challengeUrl: challenge));
-      },
-    );
+    try {
+      final bunkerConnection = await ndk.accounts.loginWithBunkerUrl(
+        bunkerUrl: bunkerFieldController.text.trim(),
+        bunkers: ndk.bunkers,
+        authCallback: (challenge) => showBunkerAuthToast(challenge),
+      );
 
-    isBunkerLoading.value = false;
+      isBunkerLoading.value = false;
 
-    if (bunkerConnection == null) return;
+      if (bunkerConnection == null) return;
 
-    loggedIn();
+      loggedIn();
+    } catch (e) {
+      // 
+    }
   }
 
   Future<void> loginWithAmber() async {
@@ -99,6 +102,11 @@ class NLoginController extends GetxController {
   }
 
   void loggedIn() {
+    for (var toast in challengeToasts) {
+      toastification.dismiss(toast);
+    }
+    challengeToasts.clear();
+
     if (onLoggedIn != null) onLoggedIn!();
   }
 
@@ -107,22 +115,27 @@ class NLoginController extends GetxController {
 
     openNostrConnectDialog();
 
-    final bunkerSettings = await ndk.accounts.loginWithNostrConnect(
-      nostrConnect: nostrConnect!,
-      bunkers: ndk.bunkers,
-      authCallback: (challenge) {
-        Get.dialog(BunkerChallengeDialogView(challengeUrl: challenge));
-      },
-    );
+    try {
+      final bunkerSettings = await ndk.accounts.loginWithNostrConnect(
+        nostrConnect: nostrConnect!,
+        bunkers: ndk.bunkers,
+        // authCallback: (challenge) => showBunkerAuthToast(challenge),
+      );
 
-    if (isNostrConnectDialogOpen) {
-      Get.back();
-      isNostrConnectDialogOpen = false;
+      if (isNostrConnectDialogOpen) {
+        Get.back();
+        isNostrConnectDialogOpen = false;
+      }
+
+      if (bunkerSettings == null) return;
+
+      loggedIn();
+    } catch (e) {
+      if (isNostrConnectDialogOpen) {
+        Get.back();
+        isNostrConnectDialogOpen = false;
+      }
     }
-
-    if (bunkerSettings == null) return;
-
-    loggedIn();
   }
 
   void openNostrConnectDialog() async {
@@ -133,5 +146,23 @@ class NLoginController extends GetxController {
       NostrConnectDialogView(nostrConnectURL: nostrConnect!.nostrConnectURL),
     );
     isNostrConnectDialogOpen = false;
+  }
+
+  void showBunkerAuthToast(String challenge) {
+    final newToast = toastification.show(
+      context: Get.context!,
+      title: Text('Bunker Authentication'),
+      description: Text('Tap to open: $challenge'),
+      alignment: Alignment.bottomRight,
+      type: ToastificationType.info,
+      style: ToastificationStyle.flat,
+      showProgressBar: true,
+      closeOnClick: false,
+      callbacks: ToastificationCallbacks(
+        onTap: (toastItem) => launchUrl(Uri.parse(challenge)),
+      ),
+    );
+
+    challengeToasts.add(newToast);
   }
 }

@@ -2,72 +2,85 @@ import 'dart:convert';
 
 import 'package:amberflutter/amberflutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ndk/data_layer/repositories/signers/nip46_event_signer.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_amber/data_layer/data_sources/amber_flutter.dart';
 import 'package:ndk_amber/data_layer/repositories/signers/amber_event_signer.dart';
 import 'package:nip01/nip01.dart';
 import 'package:nip07_event_signer/nip07_event_signer.dart';
-import 'package:nip19/nip19.dart';
+import 'package:nostr_widgets/constants/storage_keys.dart';
 import 'package:nostr_widgets/models/accounts.dart';
 
 Future<void> nRestoreAccounts(Ndk ndk) async {
   final storage = FlutterSecureStorage();
 
-  final storedAccounts = await storage.read(key: "nostr_widgets_accounts");
-  print(storedAccounts);
+  final storedAccounts = await storage.read(key: StorageKeys.nostrWidgetsAccounts);
 
   if (storedAccounts == null) return;
 
   final accounts = NostrWidgetsAccounts.fromJson(jsonDecode(storedAccounts));
 
-  if (accounts.nip07) {
-    final signer = Nip07EventSigner();
-    await signer.getPublicKeyAsync();
-    ndk.accounts.addAccount(
-      pubkey: signer.getPublicKey(),
-      type: AccountType.externalSigner,
-      signer: signer,
-    );
-  }
+  for (var account in accounts.accounts) {
+    if (account.kind == AccountKinds.nip07) {
+      ndk.accounts.addAccount(
+        pubkey: account.pubkey,
+        type: AccountType.externalSigner,
+        signer: Nip07EventSigner(),
+      );
+      continue;
+    }
 
-  if (accounts.amber) {
-    final amber = Amberflutter();
-    final amberFlutterDS = AmberFlutterDS(amber);
+    if (account.kind == AccountKinds.amber) {
+      final amber = Amberflutter();
+      final amberFlutterDS = AmberFlutterDS(amber);
 
-    final amberResponse = await amber.getPublicKey();
+      ndk.accounts.addAccount(
+        pubkey: account.pubkey,
+        type: AccountType.externalSigner,
+        signer: AmberEventSigner(
+          publicKey: account.pubkey,
+          amberFlutterDS: amberFlutterDS,
+        ),
+      );
+      continue;
+    }
 
-    final npub = amberResponse['signature'];
-    final pubkey = Nip19.npubToHex(npub);
+    if (account.kind == AccountKinds.bunker) {
+      ndk.accounts.addAccount(
+        pubkey: account.pubkey,
+        type: AccountType.externalSigner,
+        signer: Nip46EventSigner(
+          connection: BunkerConnection.fromJson(
+            jsonDecode(account.signerSeed!),
+          ),
+          requests: ndk.requests,
+          broadcast: ndk.broadcast,
+        ),
+      );
+      continue;
+    }
 
-    final signer = AmberEventSigner(
-      publicKey: pubkey,
-      amberFlutterDS: amberFlutterDS,
-    );
-    ndk.accounts.addAccount(
-      pubkey: pubkey,
-      type: AccountType.externalSigner,
-      signer: signer,
-    );
-  }
+    if (account.kind == AccountKinds.pubkey) {
+      ndk.accounts.addAccount(
+        pubkey: account.pubkey,
+        type: AccountType.publicKey,
+        signer: Bip340EventSigner(privateKey: null, publicKey: account.pubkey),
+      );
+      continue;
+    }
 
-  for (var pubkey in accounts.pubkeys) {
-    ndk.accounts.addAccount(
-      pubkey: pubkey,
-      type: AccountType.publicKey,
-      signer: Bip340EventSigner(privateKey: null, publicKey: pubkey),
-    );
-  }
-
-  for (var privkey in accounts.privkeys) {
-    final keyPair = KeyPair.fromPrivateKey(privateKey: privkey);
-    ndk.accounts.addAccount(
-      pubkey: keyPair.publicKey,
-      type: AccountType.privateKey,
-      signer: Bip340EventSigner(
-        privateKey: privkey,
-        publicKey: keyPair.publicKey,
-      ),
-    );
+    if (account.kind == AccountKinds.privkey) {
+      final keyPair = KeyPair.fromPrivateKey(privateKey: account.signerSeed!);
+      ndk.accounts.addAccount(
+        pubkey: keyPair.publicKey,
+        type: AccountType.privateKey,
+        signer: Bip340EventSigner(
+          privateKey: keyPair.privateKey,
+          publicKey: keyPair.publicKey,
+        ),
+      );
+      continue;
+    }
   }
 
   if (accounts.loggedAccount != null) {
