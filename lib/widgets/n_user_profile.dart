@@ -110,6 +110,7 @@ class NUserProfile extends StatelessWidget {
                         ],
                       ),
                     ),
+                    SizedBox(height: 8),
                   ],
                 ),
                 Positioned(
