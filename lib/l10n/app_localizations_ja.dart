@@ -78,4 +78,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get copy => 'コピー';
+
+  @override
+  String get addAccount => 'Add account';
 }

@@ -78,4 +78,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get copy => 'Копировать';
+
+  @override
+  String get addAccount => 'Add account';
 }

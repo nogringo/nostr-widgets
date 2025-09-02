@@ -78,4 +78,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get copy => '复制';
+
+  @override
+  String get addAccount => 'Add account';
 }

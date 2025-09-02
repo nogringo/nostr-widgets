@@ -97,5 +97,9 @@
   "copy": "Copy",
   "@copy": {
     "description": "Button text to copy to clipboard"
+  },
+  "addAccount": "Add account",
+  "@addAccount": {
+    "description": "Button text to add a new account"
   }
 }

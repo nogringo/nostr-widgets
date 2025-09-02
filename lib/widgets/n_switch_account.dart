@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nostr_widgets/controllers/n_switch_account_controller.dart';
 import 'package:nostr_widgets/functions/n_save_accounts_state.dart';
+import 'package:nostr_widgets/l10n/app_localizations.dart';
 import 'package:nostr_widgets/widgets/widgets.dart';
 
 class NSwitchAccount extends StatelessWidget {
@@ -56,7 +57,7 @@ class NSwitchAccount extends StatelessWidget {
                       c.update();
                       onAccountRemove?.call(pubkey);
                     },
-                    child: Text("Logout"),
+                    child: Text(AppLocalizations.of(context)!.logout),
                   ),
                 );
 
@@ -82,7 +83,7 @@ class NSwitchAccount extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 16),
                 child: TextButton.icon(
                   onPressed: onAddAccount,
-                  label: Text("Add account"),
+                  label: Text(AppLocalizations.of(context)!.addAccount),
                   icon: Icon(Icons.add_circle_outline),
                 ),
               ),
