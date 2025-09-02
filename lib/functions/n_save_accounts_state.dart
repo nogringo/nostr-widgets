@@ -45,7 +45,7 @@ Future<void> nSaveAccountsState(Ndk ndk) async {
         NostrAccount(
           kind: AccountKinds.privkey,
           pubkey: account.pubkey,
-          signerSeed: jsonEncode(signer.privateKey!),
+          signerSeed: signer.privateKey!,
         ),
       );
       continue;

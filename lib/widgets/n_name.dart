@@ -5,6 +5,7 @@ import 'package:nip19/nip19.dart';
 class NName extends StatelessWidget {
   final Ndk ndk;
   final String? pubkey;
+  final Metadata? metadata;
   final TextStyle? style;
   final int? maxLines;
   final TextOverflow? overflow;
@@ -16,6 +17,7 @@ class NName extends StatelessWidget {
     super.key,
     required this.ndk,
     this.pubkey,
+    this.metadata,
     this.style,
     this.maxLines = 1,
     this.overflow = TextOverflow.ellipsis,
@@ -48,7 +50,9 @@ class NName extends StatelessWidget {
 
   Future<String?> _getName() async {
     try {
-      final userMetadata = await ndk.metadata.loadMetadata(_pubkey!);
+      // Use provided metadata if available, otherwise load it
+      final userMetadata =
+          metadata ?? await ndk.metadata.loadMetadata(_pubkey!);
       return userMetadata?.getName();
     } catch (e) {
       return null;

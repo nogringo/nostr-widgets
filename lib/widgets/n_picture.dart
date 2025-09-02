@@ -5,6 +5,7 @@ import 'package:nostr_widgets/functions/get_color_from_pubkey.dart';
 class NPicture extends StatelessWidget {
   final Ndk ndk;
   final String? pubkey;
+  final Metadata? metadata;
   final bool useCircleAvatar;
   final double? circleAvatarRadius;
 
@@ -14,12 +15,28 @@ class NPicture extends StatelessWidget {
     super.key,
     required this.ndk,
     this.pubkey,
+    this.metadata,
     this.useCircleAvatar = true,
     this.circleAvatarRadius,
   });
 
   @override
   Widget build(BuildContext context) {
+    // If metadata is already provided, use it directly without loading
+    if (metadata != null) {
+      final picture = _buildPictureContentFromMetadata(context, metadata);
+
+      if (useCircleAvatar) {
+        return CircleAvatar(
+          radius: circleAvatarRadius,
+          child: ClipOval(child: AspectRatio(aspectRatio: 1, child: picture)),
+        );
+      }
+
+      return picture;
+    }
+
+    // Only load metadata if it's not provided
     return FutureBuilder(
       future: ndk.metadata.loadMetadata(_pubkey!),
       builder: (context, snapshot) {
@@ -35,6 +52,18 @@ class NPicture extends StatelessWidget {
         return picture;
       },
     );
+  }
+
+  Widget _buildPictureContentFromMetadata(
+    BuildContext context,
+    Metadata? metadata,
+  ) {
+    final picture = metadata?.picture;
+    if (picture == null) {
+      return _buildDefaultPicture(context, metadata?.getName());
+    }
+
+    return _buildImagePicture(context, picture);
   }
 
   Widget _buildPictureContent(

@@ -14,7 +14,9 @@ import 'package:nostr_widgets/models/accounts.dart';
 Future<void> nRestoreAccounts(Ndk ndk) async {
   final storage = FlutterSecureStorage();
 
-  final storedAccounts = await storage.read(key: StorageKeys.nostrWidgetsAccounts);
+  final storedAccounts = await storage.read(
+    key: StorageKeys.nostrWidgetsAccounts,
+  );
 
   if (storedAccounts == null) return;
 

@@ -67,7 +67,7 @@ class NLoginController extends GetxController {
 
       loggedIn();
     } catch (e) {
-      // 
+      //
     }
   }
 
@@ -153,7 +153,9 @@ class NLoginController extends GetxController {
     final newToast = toastification.show(
       context: Get.context!,
       title: Text(AppLocalizations.of(Get.context!)!.bunkerAuthentication),
-      description: Text(AppLocalizations.of(Get.context!)!.tapToOpen(challenge)),
+      description: Text(
+        AppLocalizations.of(Get.context!)!.tapToOpen(challenge),
+      ),
       alignment: Alignment.bottomRight,
       type: ToastificationType.info,
       style: ToastificationStyle.flat,
