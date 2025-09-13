@@ -55,6 +55,8 @@ final userBanner = NBanner(ndk);
 final userPicture = NPicture(ndk);
 final userName = NName(ndk);
 
+NSwitchAccount(ndk);
+
 // call this to connect user from local storage
 nRestoreAccounts(ndk);
 

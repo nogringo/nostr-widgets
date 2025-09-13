@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:nip01/nip01.dart';
 import 'package:nip07_event_signer/nip07_event_signer.dart';
@@ -11,7 +10,7 @@ import 'package:nostr_widgets/functions/n_save_accounts_state.dart';
 import 'package:nostr_widgets/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NLogin extends StatelessWidget {
+class NLogin extends StatefulWidget {
   final Ndk ndk;
   final void Function()? onLoggedIn;
   final bool enableAccountCreation;
@@ -42,15 +41,38 @@ class NLogin extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    Get.put(
-      NLoginController(
-        ndk: ndk,
-        onLoggedIn: onLoggedIn,
-        nostrConnect: nostrConnect,
-      ),
-    );
+  State<NLogin> createState() => _NLoginState();
+}
 
+class _NLoginState extends State<NLogin> {
+  late NLoginController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = NLoginController(
+      ndk: widget.ndk,
+      onLoggedIn: widget.onLoggedIn,
+      nostrConnect: widget.nostrConnect,
+    );
+    controller.addListener(_updateUI);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_updateUI);
+    controller.dispose();
+    super.dispose();
+  }
+
+  void _updateUI() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     const double bottomPadding = 16;
 
     final createAccountView = Padding(
@@ -82,38 +104,36 @@ class NLogin extends StatelessWidget {
             AppLocalizations.of(context)!.nostrAddress,
             style: Theme.of(context).textTheme.labelLarge,
           ),
-          Obx(
-            () => TextField(
-              controller: NLoginController.to.nip05FieldController,
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.nostrAddressHint,
-                suffixIcon: NLoginController.to.isFetchingNip05.isFalse
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: IconButton(
-                          onPressed: () => loginWithNip05(
-                            NLoginController.to.nip05FieldController.text,
-                          ),
-                          icon: Icon(Icons.arrow_forward),
+          TextField(
+            controller: controller.nip05FieldController,
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.nostrAddressHint,
+              suffixIcon: !controller.isFetchingNip05
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: IconButton(
+                        onPressed: () => loginWithNip05(
+                          controller.nip05FieldController.text,
                         ),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.all(12),
-                        child: SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(),
-                        ),
+                        icon: Icon(Icons.arrow_forward),
                       ),
-                errorText: [
-                  null,
-                  AppLocalizations.of(context)!.invalidAddress,
-                  AppLocalizations.of(context)!.unableToConnect,
-                ][NLoginController.to.nip05LoginError.value],
-              ),
-              onChanged: nip05Change,
-              onSubmitted: loginWithNip05,
+                    )
+                  : Padding(
+                      padding: EdgeInsets.all(12),
+                      child: SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+              errorText: [
+                null,
+                AppLocalizations.of(context)!.invalidAddress,
+                AppLocalizations.of(context)!.unableToConnect,
+              ][controller.nip05LoginError],
             ),
+            onChanged: nip05Change,
+            onSubmitted: loginWithNip05,
           ),
         ],
       ),
@@ -189,37 +209,32 @@ class NLogin extends StatelessWidget {
             AppLocalizations.of(context)!.bunker,
             style: Theme.of(context).textTheme.labelLarge,
           ),
-          if (enableBunkerLogin)
+          if (widget.enableBunkerLogin)
             TextField(
-              controller: NLoginController.to.bunkerFieldController,
+              controller: controller.bunkerFieldController,
               decoration: InputDecoration(hintText: "bunker://"),
-              onChanged: (_) => NLoginController.to.update(),
+              onChanged: (_) => setState(() {}),
             ),
-          if (enableBunkerLogin)
+          if (widget.enableBunkerLogin)
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: GetBuilder<NLoginController>(
-                builder: (c) {
-                  return Obx(() {
-                    return FilledButton(
-                      onPressed: c.isValidBunkerUrl && !c.isBunkerLoading.value
-                          ? c.loginWithBunkerUrl
-                          : null,
-                      child: Text(
-                        c.isBunkerLoading.value
-                            ? "Loading..."
-                            : "Login with bunker",
-                      ),
-                    );
-                  });
-                },
+              child: FilledButton(
+                onPressed:
+                    controller.isValidBunkerUrl && !controller.isBunkerLoading
+                    ? () => controller.loginWithBunkerUrl(context)
+                    : null,
+                child: Text(
+                  controller.isBunkerLoading
+                      ? "Loading..."
+                      : "Login with bunker",
+                ),
               ),
             ),
-          if (enableNostrConnectLogin)
+          if (widget.enableNostrConnectLogin)
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: TextButton.icon(
-                onPressed: NLoginController.to.showNostrConnectQrcode,
+                onPressed: () => controller.showNostrConnectQrcode(context),
                 label: Text(
                   AppLocalizations.of(context)!.showNostrConnectQrcode,
                 ),
@@ -232,27 +247,28 @@ class NLogin extends StatelessWidget {
 
     final amberView = Padding(
       padding: EdgeInsetsGeometry.only(bottom: bottomPadding),
-      child: Obx(() {
-        return FilledButton.icon(
-          onPressed: NLoginController.to.isWaitingForAmber.value
-              ? null
-              : NLoginController.to.loginWithAmber,
-          label: Text(AppLocalizations.of(context)!.loginWithAmber),
-          icon: Icon(Icons.diamond),
-        );
-      }),
+      child: FilledButton.icon(
+        onPressed: controller.isWaitingForAmber
+            ? null
+            : controller.loginWithAmber,
+        label: Text(AppLocalizations.of(context)!.loginWithAmber),
+        icon: Icon(Icons.diamond),
+      ),
     );
+
+    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (enablePubkeyLogin && enableNip05Login) nip05View,
-        if (enablePubkeyLogin && enableNpubLogin) npubView,
-        if (enableNsecLogin) nsecView,
-        if (enableNip07Login && kIsWeb) nip07View,
-        if (enableBunkerLogin || enableNostrConnectLogin) bunkerView,
-        if (enableAmberLogin && GetPlatform.isAndroid) amberView,
-        if (enableAccountCreation) createAccountView,
+        if (widget.enablePubkeyLogin && widget.enableNip05Login) nip05View,
+        if (widget.enablePubkeyLogin && widget.enableNpubLogin) npubView,
+        if (widget.enableNsecLogin) nsecView,
+        if (widget.enableNip07Login && kIsWeb) nip07View,
+        if (widget.enableBunkerLogin || widget.enableNostrConnectLogin)
+          bunkerView,
+        if (widget.enableAmberLogin && isAndroid) amberView,
+        if (widget.enableAccountCreation) createAccountView,
       ],
     );
   }
@@ -265,15 +281,15 @@ class NLogin extends StatelessWidget {
       return;
     }
 
-    if (ndk.accounts.hasAccount(pubkey)) {
-      ndk.accounts.switchAccount(pubkey: pubkey);
+    if (widget.ndk.accounts.hasAccount(pubkey)) {
+      widget.ndk.accounts.switchAccount(pubkey: pubkey);
     } else {
-      ndk.accounts.loginPublicKey(pubkey: pubkey);
+      widget.ndk.accounts.loginPublicKey(pubkey: pubkey);
     }
 
-    await nSaveAccountsState(ndk);
+    await nSaveAccountsState(widget.ndk);
 
-    NLoginController.to.loggedIn();
+    controller.loggedIn();
   }
 
   Future<void> loginWithNsec(String nsec) async {
@@ -286,46 +302,51 @@ class NLogin extends StatelessWidget {
 
     final pubkey = keyPair.publicKey;
 
-    if (ndk.accounts.hasAccount(pubkey)) {
-      ndk.accounts.switchAccount(pubkey: pubkey);
+    if (widget.ndk.accounts.hasAccount(pubkey)) {
+      widget.ndk.accounts.switchAccount(pubkey: pubkey);
     } else {
-      ndk.accounts.loginPrivateKey(pubkey: pubkey, privkey: keyPair.privateKey);
+      widget.ndk.accounts.loginPrivateKey(
+        pubkey: pubkey,
+        privkey: keyPair.privateKey,
+      );
     }
 
-    await nSaveAccountsState(ndk);
+    await nSaveAccountsState(widget.ndk);
 
-    NLoginController.to.loggedIn();
+    controller.loggedIn();
   }
 
   void nip05Change(String _) {
-    NLoginController.to.nip05LoginError.value = 0;
+    controller.nip05LoginError = 0;
   }
 
   Future<void> loginWithNip05(String nip05) async {
-    if (!GetUtils.isEmail(nip05)) {
-      NLoginController.to.nip05LoginError.value = 1;
+    if (!RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    ).hasMatch(nip05)) {
+      controller.nip05LoginError = 1;
       return;
     }
 
-    NLoginController.to.isFetchingNip05.value = true;
+    controller.isFetchingNip05 = true;
     final nip05Result = await fetchNip05(nip05);
-    NLoginController.to.isFetchingNip05.value = false;
+    controller.isFetchingNip05 = false;
 
     final pubkey = nip05Result.pubkey;
     if (pubkey == null) {
-      NLoginController.to.nip05LoginError.value = 2;
+      controller.nip05LoginError = 2;
       return;
     }
 
-    if (ndk.accounts.hasAccount(pubkey)) {
-      ndk.accounts.switchAccount(pubkey: pubkey);
+    if (widget.ndk.accounts.hasAccount(pubkey)) {
+      widget.ndk.accounts.switchAccount(pubkey: pubkey);
     } else {
-      ndk.accounts.loginPublicKey(pubkey: pubkey);
+      widget.ndk.accounts.loginPublicKey(pubkey: pubkey);
     }
 
-    await nSaveAccountsState(ndk);
+    await nSaveAccountsState(widget.ndk);
 
-    NLoginController.to.loggedIn();
+    controller.loggedIn();
   }
 
   Future<void> loginWithNip07() async {
@@ -342,14 +363,14 @@ class NLogin extends StatelessWidget {
 
     final pubkey = await signer.getPublicKeyAsync();
 
-    if (ndk.accounts.hasAccount(pubkey)) {
-      ndk.accounts.switchAccount(pubkey: pubkey);
+    if (widget.ndk.accounts.hasAccount(pubkey)) {
+      widget.ndk.accounts.switchAccount(pubkey: pubkey);
     } else {
-      ndk.accounts.loginExternalSigner(signer: signer);
+      widget.ndk.accounts.loginExternalSigner(signer: signer);
     }
 
-    await nSaveAccountsState(ndk);
+    await nSaveAccountsState(widget.ndk);
 
-    NLoginController.to.loggedIn();
+    controller.loggedIn();
   }
 }

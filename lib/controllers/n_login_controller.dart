@@ -1,6 +1,5 @@
 import 'package:amberflutter/amberflutter.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ndk/ndk.dart';
 import 'package:ndk_amber/ndk_amber.dart';
 import 'package:nip19/nip19.dart';
@@ -9,23 +8,43 @@ import 'package:nostr_widgets/widgets/nostr_connect_dialog_view.dart';
 import 'package:toastification/toastification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class NLoginController extends GetxController {
-  static NLoginController get to => Get.find();
-
+class NLoginController extends ChangeNotifier {
   Ndk ndk;
   void Function()? onLoggedIn;
 
   final nip05FieldController = TextEditingController();
-  RxBool isFetchingNip05 = false.obs;
-  RxInt nip05LoginError = 0.obs;
+  bool _isFetchingNip05 = false;
+  bool get isFetchingNip05 => _isFetchingNip05;
+  set isFetchingNip05(bool value) {
+    _isFetchingNip05 = value;
+    notifyListeners();
+  }
+
+  int _nip05LoginError = 0;
+  int get nip05LoginError => _nip05LoginError;
+  set nip05LoginError(int value) {
+    _nip05LoginError = value;
+    notifyListeners();
+  }
 
   final bunkerFieldController = TextEditingController();
-  RxBool isBunkerLoading = false.obs;
+  bool _isBunkerLoading = false;
+  bool get isBunkerLoading => _isBunkerLoading;
+  set isBunkerLoading(bool value) {
+    _isBunkerLoading = value;
+    notifyListeners();
+  }
+
   NostrConnect? nostrConnect;
   bool isNostrConnectDialogOpen = false;
   List<ToastificationItem> challengeToasts = [];
 
-  RxBool isWaitingForAmber = false.obs;
+  bool _isWaitingForAmber = false;
+  bool get isWaitingForAmber => _isWaitingForAmber;
+  set isWaitingForAmber(bool value) {
+    _isWaitingForAmber = value;
+    notifyListeners();
+  }
 
   bool get isValidBunkerUrl {
     final bunkerText = bunkerFieldController.text.trim();
@@ -51,17 +70,17 @@ class NLoginController extends GetxController {
 
   NLoginController({required this.ndk, this.onLoggedIn, this.nostrConnect});
 
-  Future<void> loginWithBunkerUrl() async {
-    isBunkerLoading.value = true;
+  Future<void> loginWithBunkerUrl(BuildContext context) async {
+    isBunkerLoading = true;
 
     try {
       final bunkerConnection = await ndk.accounts.loginWithBunkerUrl(
         bunkerUrl: bunkerFieldController.text.trim(),
         bunkers: ndk.bunkers,
-        authCallback: (challenge) => showBunkerAuthToast(challenge),
+        authCallback: (challenge) => showBunkerAuthToast(challenge, context),
       );
 
-      isBunkerLoading.value = false;
+      isBunkerLoading = false;
 
       if (bunkerConnection == null) return;
 
@@ -72,7 +91,7 @@ class NLoginController extends GetxController {
   }
 
   Future<void> loginWithAmber() async {
-    isWaitingForAmber.value = true;
+    isWaitingForAmber = true;
 
     final amber = Amberflutter();
 
@@ -97,7 +116,7 @@ class NLoginController extends GetxController {
 
     ndk.accounts.loginExternalSigner(signer: amberSigner);
 
-    isWaitingForAmber.value = false;
+    isWaitingForAmber = false;
 
     loggedIn();
   }
@@ -111,10 +130,10 @@ class NLoginController extends GetxController {
     if (onLoggedIn != null) onLoggedIn!();
   }
 
-  void showNostrConnectQrcode() async {
+  void showNostrConnectQrcode(BuildContext context) async {
     if (nostrConnect == null) return;
 
-    openNostrConnectDialog();
+    openNostrConnectDialog(context);
 
     try {
       final bunkerSettings = await ndk.accounts.loginWithNostrConnect(
@@ -124,7 +143,7 @@ class NLoginController extends GetxController {
       );
 
       if (isNostrConnectDialogOpen) {
-        Get.back();
+        Navigator.of(context).pop();
         isNostrConnectDialogOpen = false;
       }
 
@@ -133,29 +152,30 @@ class NLoginController extends GetxController {
       loggedIn();
     } catch (e) {
       if (isNostrConnectDialogOpen) {
-        Get.back();
+        Navigator.of(context).pop();
         isNostrConnectDialogOpen = false;
       }
     }
   }
 
-  void openNostrConnectDialog() async {
+  void openNostrConnectDialog(BuildContext context) async {
     if (nostrConnect == null) return;
 
     isNostrConnectDialogOpen = true;
-    await Get.dialog(
-      NostrConnectDialogView(nostrConnectURL: nostrConnect!.nostrConnectURL),
+    await showDialog(
+      context: context,
+      builder: (_) => NostrConnectDialogView(
+        nostrConnectURL: nostrConnect!.nostrConnectURL,
+      ),
     );
     isNostrConnectDialogOpen = false;
   }
 
-  void showBunkerAuthToast(String challenge) {
+  void showBunkerAuthToast(String challenge, BuildContext context) {
     final newToast = toastification.show(
-      context: Get.context!,
-      title: Text(AppLocalizations.of(Get.context!)!.bunkerAuthentication),
-      description: Text(
-        AppLocalizations.of(Get.context!)!.tapToOpen(challenge),
-      ),
+      context: context,
+      title: Text(AppLocalizations.of(context)!.bunkerAuthentication),
+      description: Text(AppLocalizations.of(context)!.tapToOpen(challenge)),
       alignment: Alignment.bottomRight,
       type: ToastificationType.info,
       style: ToastificationStyle.flat,

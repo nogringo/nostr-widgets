@@ -5,6 +5,7 @@
 - Bunker login
 - Nostr connect login
 - Login with Amber
+- Switch account widget
 
 ### Fix
 

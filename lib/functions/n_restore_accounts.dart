@@ -85,13 +85,7 @@ Future<void> nRestoreAccounts(Ndk ndk) async {
     }
   }
 
-  if (accounts.loggedAccount != null) {
-    ndk.accounts.switchAccount(pubkey: accounts.loggedAccount!);
-  }
-
-  if (ndk.accounts.getLoggedAccount() == null &&
-      ndk.accounts.accounts.isNotEmpty) {
-    final pubkey = ndk.accounts.accounts.values.first.pubkey;
-    ndk.accounts.switchAccount(pubkey: pubkey);
-  }
+  if (accounts.loggedAccount == null) return;
+  if (!ndk.accounts.hasAccount(accounts.loggedAccount!)) return;
+  ndk.accounts.switchAccount(pubkey: accounts.loggedAccount!);
 }
