@@ -1,3 +1,8 @@
+## 1.0.0
+
+- add switch account widget
+- remove get dependance
+
 ## 0.0.4
 
 ### New features
